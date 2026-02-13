@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - NORTHSAFE</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="../assets/css/style.css">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#FF6B35',
+                        'primary-dark': '#E85A2A',
+                        secondary: '#1E3A8A',
+                        'secondary-light': '#3B82F6',
+                        dark: '#0F172A',
+                    },
+                    fontFamily: {
+                        sans: ['Plus Jakarta Sans', 'sans-serif'],
+                        display: ['Space Grotesk', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+
+<body class="bg-gray-50">
+
+    <!-- Navigation -->
+    <nav class="bg-white border-b border-gray-200 sticky top-0 z-40">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center space-x-8">
+                    <a href="home.html" class="flex items-center space-x-3">
+                        <div
+                            class="w-10 h-10 bg-gradient-to-br from-primary to-secondary rounded-lg flex items-center justify-center">
+                            <i class="fas fa-shield-alt text-white"></i>
+                        </div>
+                        <span class="font-display font-bold text-xl gradient-text">NORTHSAFE</span>
+                    </a>
+
+                    <div class="hidden md:flex items-center space-x-6">
+                        <a href="home.html" class="nav-link">
+                            <i class="fas fa-home mr-2"></i>Home
+                        </a>
+                        <a href="dashboard.html" class="nav-link active">
+                            <i class="fas fa-chart-line mr-2"></i>My Reports
+                        </a>
+                        <a href="hazard-map.html" class="nav-link">
+                            <i class="fas fa-map-marked-alt mr-2"></i>Map
+                        </a>
+                    </div>
+                </div>
+
+                <div class="flex items-center space-x-4">
+                    <!-- Notifications -->
+                    <button class="relative p-2 text-gray-600 hover:text-primary transition-colors">
+                        <i class="fas fa-bell text-xl"></i>
+                        <span class="notification-badge">3</span>
+                    </button>
+
+                    <!-- User Menu -->
+                    <div class="relative">
+                        <button id="userMenuButton"
+                            class="flex items-center space-x-3 p-2 rounded-lg hover:bg-gray-100 transition-colors">
+                            <div
+                                class="w-8 h-8 bg-gradient-to-br from-primary to-secondary rounded-full flex items-center justify-center">
+                                <span class="text-white text-sm font-bold" id="userInitial">J</span>
+                            </div>
+                            <div class="hidden md:block text-left">
+                                <p class="text-sm font-semibold text-dark" id="userName">Juan Dela Cruz</p>
+                                <p class="text-xs text-gray-500" id="userBarangay">Barangay 171</p>
+                            </div>
+                            <i class="fas fa-chevron-down text-gray-400 text-sm"></i>
+                        </button>
+
+                        <!-- Dropdown Menu -->
+                        <div id="userMenuDropdown"
+                            class="hidden absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 py-2">
+                            <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                                <i class="fas fa-user mr-2"></i>Profile
+                            </a>
+                            <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                                <i class="fas fa-cog mr-2"></i>Settings
+                            </a>
+                            <hr class="my-2">
+                            <button id="logoutBtn"
+                                class="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100">
+                                <i class="fas fa-sign-out-alt mr-2"></i>Logout
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+
+        <!-- Welcome Section -->
+        <div class="mb-8 animate-slide-up">
+            <h1 class="text-3xl font-bold text-dark mb-2">
+                Welcome back, <span id="welcomeName">Juan</span>! 👋
+            </h1>
+            <p class="text-gray-600">Here's what's happening in your community today</p>
+        </div>
+
+        <!-- Statistics Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+            <!-- Total Reports -->
+            <div class="card p-6 card-hover animate-slide-up" style="animation-delay: 0.1s">
+                <div class="flex items-center justify-between mb-4">
+                    <div
+                        class="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg flex items-center justify-center">
+                        <i class="fas fa-file-alt text-white text-xl"></i>
+                    </div>
+                    <span class="text-2xl font-bold text-dark" id="totalReports">0</span>
+                </div>
+                <h3 class="text-sm font-semibold text-gray-600 mb-1">Total Reports</h3>
+                <p class="text-xs text-green-600">
+                    <i class="fas fa-arrow-up"></i> 2 this week
+                </p>
+            </div>
+
+            <!-- Pending -->
+            <div class="card p-6 card-hover animate-slide-up" style="animation-delay: 0.2s">
+                <div class="flex items-center justify-between mb-4">
+                    <div
+                        class="w-12 h-12 bg-gradient-to-br from-yellow-500 to-orange-500 rounded-lg flex items-center justify-center">
+                        <i class="fas fa-clock text-white text-xl"></i>
+                    </div>
+                    <span class="text-2xl font-bold text-dark" id="pendingReports">0</span>
+                </div>
+                <h3 class="text-sm font-semibold text-gray-600 mb-1">Pending</h3>
+                <p class="text-xs text-gray-500">Awaiting verification</p>
+            </div>
+
+            <!-- Resolved -->
+            <div class="card p-6 card-hover animate-slide-up" style="animation-delay: 0.3s">
+                <div class="flex items-center justify-between mb-4">
+                    <div
+                        class="w-12 h-12 bg-gradient-to-br from-green-500 to-emerald-600 rounded-lg flex items-center justify-center">
+                        <i class="fas fa-check-circle text-white text-xl"></i>
+                    </div>
+                    <span class="text-2xl font-bold text-dark" id="resolvedReports">0</span>
+                </div>
+                <h3 class="text-sm font-semibold text-gray-600 mb-1">Resolved</h3>
+                <p class="text-xs text-green-600">
+                    <i class="fas fa-check"></i> Issues fixed
+                </p>
+            </div>
+
+            <!-- Reward Points -->
+            <div class="card p-6 card-hover animate-slide-up" style="animation-delay: 0.4s">
+                <div class="flex items-center justify-between mb-4">
+                    <div
+                        class="w-12 h-12 bg-gradient-to-br from-purple-500 to-pink-500 rounded-lg flex items-center justify-center">
+                        <i class="fas fa-gift text-white text-xl"></i>
+                    </div>
+                    <span class="text-2xl font-bold text-dark" id="rewardPoints">0</span>
+                </div>
+                <h3 class="text-sm font-semibold text-gray-600 mb-1">Reward Points</h3>
+                <p class="text-xs text-purple-600">
+                    <i class="fas fa-star"></i> Earn more
+                </p>
+            </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+            <!-- Report Hazard CTA -->
+            <div class="lg:col-span-2 card p-8 bg-gradient-to-br from-primary to-orange-500 text-white card-hover animate-slide-up"
+                style="animation-delay: 0.5s">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h2 class="font-display font-bold text-2xl mb-2">Report a Hazard</h2>
+                        <p class="text-orange-100 mb-6">Help keep your community safe by reporting hazards you encounter
+                        </p>
+                        <a href="report-hazard.html"
+                            class="inline-flex items-center px-6 py-3 bg-white text-primary rounded-lg font-semibold hover:bg-gray-100 transition-all transform hover:-translate-y-0.5">
+                            <i class="fas fa-plus-circle mr-2"></i>
+                            Create New Report
+                        </a>
+                    </div>
+                    <div class="hidden lg:block">
+                        <i class="fas fa-exclamation-triangle text-white opacity-20 text-8xl"></i>
+                    </div>
+                </div>
+            </div>
+
+            <!-- View Map CTA -->
+            <div class="card p-8 bg-gradient-to-br from-secondary to-secondary-light text-white card-hover animate-slide-up"
+                style="animation-delay: 0.6s">
+                <div class="text-center">
+                    <div class="mb-4">
+                        <i class="fas fa-map-marked-alt text-6xl opacity-80"></i>
+                    </div>
+                    <h3 class="font-semibold text-lg mb-2">View Hazard Map</h3>
+                    <p class="text-blue-100 text-sm mb-4">See all reported hazards in your area</p>
+                    <a href="hazard-map.html"
+                        class="inline-flex items-center px-4 py-2 bg-white text-secondary rounded-lg font-semibold text-sm hover:bg-gray-100 transition-all">
+                        Open Map
+                        <i class="fas fa-arrow-right ml-2"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- My Reports Section -->
+        <div class="card p-6 animate-slide-up" style="animation-delay: 0.7s">
+            <div class="flex items-center justify-between mb-6">
+                <h2 class="font-display font-bold text-2xl text-dark">My Reports</h2>
+                <div class="flex items-center space-x-2">
+                    <select id="filterStatus"
+                        class="px-4 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-primary focus:border-transparent">
+                        <option value="all">All Reports</option>
+                        <option value="Pending">Pending</option>
+                        <option value="In Progress">In Progress</option>
+                        <option value="Resolved">Resolved</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Reports Table -->
+            <div class="overflow-x-auto">
+                <table class="w-full">
+                    <thead class="bg-gray-50 border-b border-gray-200">
+                        <tr>
+                            <th
+                                class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                                Report</th>
+                            <th
+                                class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                                Category</th>
+                            <th
+                                class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                                Status</th>
+                            <th
+                                class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                                Date</th>
+                            <th
+                                class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                                Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="reportsTableBody" class="bg-white divide-y divide-gray-200">
+                        <!-- Reports will be inserted here -->
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Empty State -->
+            <div id="emptyState" class="hidden text-center py-12">
+                <i class="fas fa-inbox text-gray-300 text-6xl mb-4"></i>
+                <h3 class="text-lg font-semibold text-gray-600 mb-2">No reports yet</h3>
+                <p class="text-gray-500 mb-6">Start by creating your first hazard report</p>
+                <a href="report-hazard.html" class="btn btn-primary inline-flex">
+                    <i class="fas fa-plus-circle mr-2"></i>
+                    Create Report
+                </a>
+            </div>
+        </div>
+
+        <!-- Recent Community Reports -->
+        <div class="mt-8 card p-6 animate-slide-up" style="animation-delay: 0.8s">
+            <div class="flex items-center justify-between mb-6">
+                <h2 class="font-display font-bold text-2xl text-dark">Recent Community Reports</h2>
+                <a href="hazard-map.html"
+                    class="text-sm font-semibold text-secondary hover:text-primary transition-colors">
+                    View All <i class="fas fa-arrow-right ml-1"></i>
+                </a>
+            </div>
+
+            <div id="communityReports" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <!-- Community reports will be inserted here -->
+            </div>
+        </div>
+    </main>
+
+    <!-- Emergency Floating Button -->
+    <div class="fixed bottom-6 right-6 z-50">
+        <button id="emergencyBtn"
+            class="w-16 h-16 bg-red-500 hover:bg-red-600 text-white rounded-full shadow-2xl flex items-center justify-center transition-all transform hover:scale-110">
+            <i class="fas fa-phone-alt text-xl"></i>
+        </button>
+    </div>
+
+    <!-- Emergency Menu Modal -->
+    <div id="emergencyModal" class="modal-overlay">
+        <div class="modal-content max-w-md p-6">
+            <div class="flex items-center justify-between mb-6">
+                <h3 class="font-bold text-xl text-dark">Emergency Hotlines</h3>
+                <button id="closeEmergencyModal" class="text-gray-500 hover:text-dark">
+                    <i class="fas fa-times text-xl"></i>
+                </button>
+            </div>
+            <div class="space-y-3">
+                <a href="tel:911"
+                    class="block p-4 bg-red-50 border-2 border-red-200 rounded-lg hover:bg-red-100 transition-colors">
+                    <div class="flex items-center">
+                        <div class="w-12 h-12 bg-red-500 rounded-lg flex items-center justify-center mr-4">
+                            <i class="fas fa-exclamation-triangle text-white text-xl"></i>
+                        </div>
+                        <div>
+                            <p class="font-bold text-dark">Emergency</p>
+                            <p class="text-2xl font-bold text-red-600">911</p>
+                        </div>
+                    </div>
+                </a>
+                <a href="tel:117"
+                    class="block p-4 bg-orange-50 border-2 border-orange-200 rounded-lg hover:bg-orange-100 transition-colors">
+                    <div class="flex items-center">
+                        <div class="w-12 h-12 bg-orange-500 rounded-lg flex items-center justify-center mr-4">
+                            <i class="fas fa-fire text-white text-xl"></i>
+                        </div>
+                        <div>
+                            <p class="font-bold text-dark">Fire Department</p>
+                            <p class="text-2xl font-bold text-orange-600">117</p>
+                        </div>
+                    </div>
+                </a>
+                <a href="tel:143"
+                    class="block p-4 bg-blue-50 border-2 border-blue-200 rounded-lg hover:bg-blue-100 transition-colors">
+                    <div class="flex items-center">
+                        <div class="w-12 h-12 bg-blue-500 rounded-lg flex items-center justify-center mr-4">
+                            <i class="fas fa-ambulance text-white text-xl"></i>
+                        </div>
+                        <div>
+                            <p class="font-bold text-dark">Red Cross</p>
+                            <p class="text-2xl font-bold text-blue-600">143</p>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <script src="../assets/js/main.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Check authentication
+            if (!NORTHSAFE.Auth.requireAuth()) return;
+
+            const user = NORTHSAFE.Auth.getCurrentUser();
+
+            // Update user info
+            document.getElementById('userName').textContent = user.name;
+            document.getElementById('userBarangay').textContent = user.barangay;
+            document.getElementById('welcomeName').textContent = user.name.split(' ')[0];
+            document.getElementById('userInitial').textContent = user.name.charAt(0);
+
+            // User menu toggle
+            const userMenuButton = document.getElementById('userMenuButton');
+            const userMenuDropdown = document.getElementById('userMenuDropdown');
+
+            userMenuButton.addEventListener('click', function (e) {
+                e.stopPropagation();
+                userMenuDropdown.classList.toggle('hidden');
+            });
+
+            document.addEventListener('click', function () {
+                userMenuDropdown.classList.add('hidden');
+            });
+
+            // Logout
+            document.getElementById('logoutBtn').addEventListener('click', function () {
+                NORTHSAFE.Auth.logout();
+            });
+
+            // Emergency modal
+            const emergencyBtn = document.getElementById('emergencyBtn');
+            const emergencyModal = document.getElementById('emergencyModal');
+            const closeEmergencyModal = document.getElementById('closeEmergencyModal');
+
+            emergencyBtn.addEventListener('click', () => {
+                emergencyModal.classList.add('active');
+            });
+
+            closeEmergencyModal.addEventListener('click', () => {
+                emergencyModal.classList.remove('active');
+            });
+
+            emergencyModal.addEventListener('click', (e) => {
+                if (e.target === emergencyModal) {
+                    emergencyModal.classList.remove('active');
+                }
+            });
+
+            // Load statistics
+            const userReports = NORTHSAFE.Reports.getByUser(user.id);
+            document.getElementById('totalReports').textContent = userReports.length;
+            document.getElementById('pendingReports').textContent = userReports.filter(r => r.status === 'Pending').length;
+            document.getElementById('resolvedReports').textContent = userReports.filter(r => r.status === 'Resolved').length;
+            document.getElementById('rewardPoints').textContent = user.points || 0;
+
+            // Load reports table
+            function loadReports(filter = 'all') {
+                const tbody = document.getElementById('reportsTableBody');
+                const emptyState = document.getElementById('emptyState');
+
+                let reports = userReports;
+                if (filter !== 'all') {
+                    reports = reports.filter(r => r.status === filter);
+                }
+
+                if (reports.length === 0) {
+                    tbody.innerHTML = '';
+                    emptyState.classList.remove('hidden');
+                    return;
+                }
+
+                emptyState.classList.add('hidden');
+
+                tbody.innerHTML = reports.map(report => `
+                    <tr class="hover:bg-gray-50 transition-colors">
+                        <td class="px-6 py-4">
+                            <div class="flex items-center">
+                                <div class="flex-shrink-0 h-10 w-10 bg-gradient-to-br from-primary to-orange-500 rounded-lg flex items-center justify-center">
+                                    <i class="fas fa-${getCategoryIcon(report.category)} text-white"></i>
+                                </div>
+                                <div class="ml-4">
+                                    <div class="text-sm font-semibold text-dark">${report.title}</div>
+                                    <div class="text-xs text-gray-500">${report.location.address}</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="px-6 py-4">
+                            <span class="inline-flex px-3 py-1 text-xs font-semibold rounded-full bg-gray-100 text-gray-800">
+                                ${report.category}
+                            </span>
+                        </td>
+                        <td class="px-6 py-4">
+                            <span class="status-badge status-${report.status.toLowerCase().replace(' ', '-')}">
+                                ${report.status}
+                            </span>
+                        </td>
+                        <td class="px-6 py-4 text-sm text-gray-600">
+                            ${NORTHSAFE.UI.getRelativeTime(report.createdAt)}
+                        </td>
+                        <td class="px-6 py-4">
+                            <button onclick="viewReport(${report.id})" class="text-secondary hover:text-primary font-semibold text-sm">
+                                View Details <i class="fas fa-arrow-right ml-1"></i>
+                            </button>
+                        </td>
+                    </tr>
+                `).join('');
+            }
+
+            // Load community reports
+            function loadCommunityReports() {
+                const allReports = NORTHSAFE.Reports.getAll()
+                    .filter(r => r.userId !== user.id)
+                    .slice(0, 6);
+
+                const container = document.getElementById('communityReports');
+
+                container.innerHTML = allReports.map(report => `
+                    <div class="card p-4 hover:shadow-lg transition-all">
+                        <div class="flex items-start justify-between mb-3">
+                            <span class="status-badge status-${report.status.toLowerCase().replace(' ', '-')}">
+                                ${report.status}
+                            </span>
+                            <span class="text-xs text-gray-500">${NORTHSAFE.UI.getRelativeTime(report.createdAt)}</span>
+                        </div>
+                        <h3 class="font-semibold text-dark mb-2">${report.title}</h3>
+                        <p class="text-sm text-gray-600 mb-3 line-clamp-2">${report.description}</p>
+                        <div class="flex items-center justify-between text-xs text-gray-500">
+                            <span><i class="fas fa-map-marker-alt mr-1"></i>${report.location.barangay}</span>
+                            <span class="inline-flex px-2 py-1 bg-gray-100 rounded">
+                                ${report.category}
+                            </span>
+                        </div>
+                    </div>
+                `).join('');
+            }
+
+            function getCategoryIcon(category) {
+                const icons = {
+                    'Fire Hazard': 'fire',
+                    'Flood': 'tint',
+                    'Road Damage': 'road',
+                    'Fallen Tree': 'tree',
+                    'Power Line': 'bolt',
+                    'Building Damage': 'building',
+                    'Illegal Dumping': 'trash',
+                    'Other': 'exclamation-circle'
+                };
+                return icons[category] || 'exclamation-circle';
+            }
+
+            // Filter reports
+            document.getElementById('filterStatus').addEventListener('change', function () {
+                loadReports(this.value);
+            });
+
+            // Initial load
+            loadReports();
+            loadCommunityReports();
+        });
+
+        function viewReport(reportId) {
+            // Navigate to report details
+            window.location.href = `report-detail.html?id=${reportId}`;
+        }
+    </script>
+</body>
+
+</html>

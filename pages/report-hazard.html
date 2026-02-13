@@ -1,0 +1,667 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Report Hazard - NORTHSAFE</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="../assets/css/style.css">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#FF6B35',
+                        'primary-dark': '#E85A2A',
+                        secondary: '#1E3A8A',
+                        'secondary-light': '#3B82F6',
+                        dark: '#0F172A',
+                    },
+                    fontFamily: {
+                        sans: ['Plus Jakarta Sans', 'sans-serif'],
+                        display: ['Space Grotesk', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+
+<body class="bg-gradient-to-br from-gray-50 to-blue-50 min-h-screen">
+
+    <!-- Navigation -->
+    <nav class="bg-white border-b border-gray-200">
+        <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <a href="dashboard.html" class="flex items-center space-x-3">
+                    <div
+                        class="w-10 h-10 bg-gradient-to-br from-primary to-secondary rounded-lg flex items-center justify-center">
+                        <i class="fas fa-shield-alt text-white"></i>
+                    </div>
+                    <span class="font-display font-bold text-xl gradient-text">NORTHSAFE</span>
+                </a>
+                <a href="dashboard.html" class="text-gray-600 hover:text-secondary transition-colors">
+                    <i class="fas fa-times text-2xl"></i>
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+
+        <!-- Header -->
+        <div class="text-center mb-8 animate-slide-up">
+            <h1 class="font-display font-bold text-4xl lg:text-5xl gradient-text mb-3">
+                Report a Hazard
+            </h1>
+            <p class="text-lg text-gray-600">
+                Help keep your community safe by reporting hazards you encounter
+            </p>
+        </div>
+
+        <!-- Success Message -->
+        <div id="successMessage"
+            class="hidden mb-6 card p-6 bg-gradient-to-r from-green-50 to-emerald-50 border-l-4 border-green-500 animate-slide-up">
+            <div class="flex items-start">
+                <div class="flex-shrink-0">
+                    <i class="fas fa-check-circle text-4xl text-green-500"></i>
+                </div>
+                <div class="ml-4 flex-1">
+                    <h3 class="text-lg font-bold text-green-900 mb-1">Report Submitted Successfully!</h3>
+                    <p class="text-sm text-green-700 mb-4">
+                        Your report has been received and is being reviewed by local authorities.
+                        You will receive notifications about the progress.
+                    </p>
+                    <div class="flex gap-3">
+                        <button onclick="window.location.href='dashboard.html'" class="btn btn-primary text-sm">
+                            <i class="fas fa-th-large mr-2"></i>View Dashboard
+                        </button>
+                        <button onclick="resetForm()" class="btn btn-ghost text-sm">
+                            <i class="fas fa-plus mr-2"></i>Submit Another
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Form -->
+        <form id="reportForm" class="card p-8 lg:p-10 animate-slide-up" style="animation-delay: 0.1s">
+
+            <!-- Step 1: Photo Evidence -->
+            <div class="mb-10">
+                <div class="flex items-center mb-6">
+                    <div
+                        class="w-10 h-10 bg-gradient-to-br from-primary to-orange-500 rounded-lg flex items-center justify-center text-white font-bold mr-4">
+                        1
+                    </div>
+                    <div>
+                        <h2 class="font-display font-bold text-2xl text-dark">Photo Evidence</h2>
+                        <p class="text-sm text-gray-600">Upload a clear photo of the hazard </p>
+                    </div>
+                </div>
+
+                <div class="upload-zone" id="uploadZone">
+                    <input type="file" id="hazardImage" accept="image/*" capture="environment" class="hidden">
+                    <label for="hazardImage" class="cursor-pointer block">
+                        <div class="text-center">
+                            <i class="fas fa-cloud-upload-alt text-6xl text-gray-400 mb-4"></i>
+                            <p class="text-lg font-semibold text-dark mb-2">Click to upload or drag and drop</p>
+                            <p class="text-sm text-gray-500">PNG, JPG up to 10MB</p>
+                            <p class="text-xs text-gray-400 mt-2">
+                                <i class="fas fa-camera mr-1"></i>On mobile? Tap to use camera
+                            </p>
+                        </div>
+                    </label>
+                </div>
+
+                <!-- Image Preview -->
+                <div id="imagePreviewContainer" class="hidden mt-4">
+                    <div class="relative">
+                        <img id="imagePreview" src="" alt="Preview"
+                            class="w-full h-64 object-cover rounded-xl border-2 border-primary">
+                        <button type="button" id="removeImage"
+                            class="absolute top-4 right-4 w-10 h-10 bg-red-500 hover:bg-red-600 text-white rounded-full shadow-lg transition-colors">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+
+                    <!-- AI Classification Result -->
+                    <div id="aiClassification"
+                        class="hidden mt-4 p-5 bg-gradient-to-r from-blue-50 to-indigo-50 border-l-4 border-secondary rounded-lg">
+                        <div class="flex items-start">
+                            <div class="flex-shrink-0">
+                                <i class="fas fa-brain text-3xl text-secondary"></i>
+                            </div>
+                            <div class="ml-4 flex-1">
+                                <h3 class="font-semibold text-dark mb-2 flex items-center">
+                                    AI Classification Result
+                                    <span id="aiProcessing" class="ml-2 hidden">
+                                        <div
+                                            class="spinner inline-block w-4 h-4 border-2 border-secondary border-t-transparent rounded-full">
+                                        </div>
+                                    </span>
+                                </h3>
+                                <div id="aiResult" class="hidden">
+                                    <div class="flex items-center justify-between mb-2">
+                                        <div>
+                                            <p class="text-sm text-gray-600">Predicted Category:</p>
+                                            <p class="text-lg font-bold text-secondary" id="aiCategory">Road Damage</p>
+                                        </div>
+                                        <div class="text-right">
+                                            <p class="text-sm text-gray-600">Confidence:</p>
+                                            <p class="text-lg font-bold text-green-600" id="aiConfidence">92%</p>
+                                        </div>
+                                    </div>
+                                    <p class="text-xs text-gray-600">
+                                        <i class="fas fa-info-circle mr-1"></i>
+                                        You can edit the category below if the AI prediction is incorrect
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 2: Hazard Details -->
+            <div class="mb-10">
+                <div class="flex items-center mb-6">
+                    <div
+                        class="w-10 h-10 bg-gradient-to-br from-secondary to-secondary-light rounded-lg flex items-center justify-center text-white font-bold mr-4">
+                        2
+                    </div>
+                    <div>
+                        <h2 class="font-display font-bold text-2xl text-dark">Hazard Details</h2>
+                        <p class="text-sm text-gray-600">Provide information about the hazard</p>
+                    </div>
+                </div>
+
+                <!-- Hazard Category -->
+                <div class="mb-6">
+                    <label class="block text-sm font-semibold text-gray-700 mb-4">
+                        Hazard Category *
+                    </label>
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                        <label class="category-option cursor-pointer">
+                            <input type="radio" name="category" value="Fire Hazard" class="hidden category-radio"
+                                required>
+                            <div class="category-card">
+                                <i class="fas fa-fire text-3xl text-red-500 mb-2"></i>
+                                <p class="font-semibold text-sm">Fire Hazard</p>
+                            </div>
+                        </label>
+                        <label class="category-option cursor-pointer">
+                            <input type="radio" name="category" value="Flood" class="hidden category-radio">
+                            <div class="category-card">
+                                <i class="fas fa-tint text-3xl text-blue-500 mb-2"></i>
+                                <p class="font-semibold text-sm">Flood</p>
+                            </div>
+                        </label>
+                        <label class="category-option cursor-pointer">
+                            <input type="radio" name="category" value="Road Damage" class="hidden category-radio">
+                            <div class="category-card">
+                                <i class="fas fa-road text-3xl text-gray-600 mb-2"></i>
+                                <p class="font-semibold text-sm">Road Damage</p>
+                            </div>
+                        </label>
+                        <label class="category-option cursor-pointer">
+                            <input type="radio" name="category" value="Fallen Tree" class="hidden category-radio">
+                            <div class="category-card">
+                                <i class="fas fa-tree text-3xl text-green-600 mb-2"></i>
+                                <p class="font-semibold text-sm">Fallen Tree</p>
+                            </div>
+                        </label>
+                        <label class="category-option cursor-pointer">
+                            <input type="radio" name="category" value="Power Line" class="hidden category-radio">
+                            <div class="category-card">
+                                <i class="fas fa-bolt text-3xl text-yellow-500 mb-2"></i>
+                                <p class="font-semibold text-sm">Power Line</p>
+                            </div>
+                        </label>
+                        <label class="category-option cursor-pointer">
+                            <input type="radio" name="category" value="Building Damage" class="hidden category-radio">
+                            <div class="category-card">
+                                <i class="fas fa-building text-3xl text-orange-600 mb-2"></i>
+                                <p class="font-semibold text-sm">Building Damage</p>
+                            </div>
+                        </label>
+                        <label class="category-option cursor-pointer">
+                            <input type="radio" name="category" value="Illegal Dumping" class="hidden category-radio">
+                            <div class="category-card">
+                                <i class="fas fa-trash text-3xl text-brown-600 mb-2"></i>
+                                <p class="font-semibold text-sm">Illegal Dumping</p>
+                            </div>
+                        </label>
+                        <label class="category-option cursor-pointer">
+                            <input type="radio" name="category" value="Other" class="hidden category-radio">
+                            <div class="category-card">
+                                <i class="fas fa-exclamation-circle text-3xl text-purple-600 mb-2"></i>
+                                <p class="font-semibold text-sm">Other</p>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Severity Level -->
+                <div class="mb-6">
+                    <label class="block text-sm font-semibold text-gray-700 mb-4">
+                        Severity Level *
+                    </label>
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                        <label class="severity-option cursor-pointer">
+                            <input type="radio" name="severity" value="Low" class="hidden severity-radio" required>
+                            <div class="severity-card severity-low">
+                                <i class="fas fa-info-circle text-2xl mb-2"></i>
+                                <p class="font-semibold">Low</p>
+                                <p class="text-xs mt-1">Minor issue</p>
+                            </div>
+                        </label>
+                        <label class="severity-option cursor-pointer">
+                            <input type="radio" name="severity" value="Medium" class="hidden severity-radio">
+                            <div class="severity-card severity-medium">
+                                <i class="fas fa-exclamation-triangle text-2xl mb-2"></i>
+                                <p class="font-semibold">Medium</p>
+                                <p class="text-xs mt-1">Needs attention</p>
+                            </div>
+                        </label>
+                        <label class="severity-option cursor-pointer">
+                            <input type="radio" name="severity" value="High" class="hidden severity-radio">
+                            <div class="severity-card severity-high">
+                                <i class="fas fa-exclamation text-2xl mb-2"></i>
+                                <p class="font-semibold">High</p>
+                                <p class="text-xs mt-1">Urgent</p>
+                            </div>
+                        </label>
+                        <label class="severity-option cursor-pointer">
+                            <input type="radio" name="severity" value="Critical" class="hidden severity-radio">
+                            <div class="severity-card severity-critical">
+                                <i class="fas fa-skull-crossbones text-2xl mb-2"></i>
+                                <p class="font-semibold">Critical</p>
+                                <p class="text-xs mt-1">Life-threatening</p>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Title -->
+                <div class="input-group mb-6">
+                    <label for="title" class="block text-sm font-semibold text-gray-700 mb-2">
+                        Report Title *
+                    </label>
+                    <input type="text" id="title" name="title" required maxlength="100" class="input-field"
+                        placeholder="Brief description (e.g., Large pothole on main road)">
+                    <div class="input-error-message">Please provide a title for your report</div>
+                </div>
+
+                <!-- Description -->
+                <div class="input-group">
+                    <label for="description" class="block text-sm font-semibold text-gray-700 mb-2">
+                        Detailed Description *
+                    </label>
+                    <textarea id="description" name="description" required rows="4" maxlength="500"
+                        class="input-field resize-none"
+                        placeholder="Provide more details about the hazard, its location, and potential risks..."></textarea>
+                    <div class="flex justify-between mt-1">
+                        <div class="input-error-message">Please describe the hazard</div>
+                        <span id="charCount" class="text-xs text-gray-500">0 / 500</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 3: Location -->
+            <div class="mb-10">
+                <div class="flex items-center mb-6">
+                    <div
+                        class="w-10 h-10 bg-gradient-to-br from-green-500 to-emerald-600 rounded-lg flex items-center justify-center text-white font-bold mr-4">
+                        3
+                    </div>
+                    <div>
+                        <h2 class="font-display font-bold text-2xl text-dark">Location</h2>
+                        <p class="text-sm text-gray-600">Where is the hazard located?</p>
+                    </div>
+                </div>
+
+                <!-- Get Current Location Button -->
+                <button type="button" id="getCurrentLocation" class="btn btn-secondary mb-4">
+                    <i class="fas fa-location-arrow mr-2"></i>
+                    <span>Use My Current Location</span>
+                </button>
+
+                <!-- Address Input -->
+                <div class="input-group mb-4">
+                    <label for="address" class="block text-sm font-semibold text-gray-700 mb-2">
+                        Address / Landmark *
+                    </label>
+                    <div class="relative">
+                        <div class="input-icon">
+                            <i class="fas fa-map-marker-alt text-gray-400"></i>
+                        </div>
+                        <input type="text" id="address" name="address" required class="input-field input-with-icon"
+                            placeholder="Street, barangay, or nearby landmark">
+                    </div>
+                    <div class="input-error-message">Please provide the location</div>
+                </div>
+
+                <!-- Barangay -->
+                <div class="input-group">
+                    <label for="locationBarangay" class="block text-sm font-semibold text-gray-700 mb-2">
+                        Barangay *
+                    </label>
+                    <select id="locationBarangay" name="locationBarangay" required class="input-field">
+                        <option value="">Select barangay</option>
+                        <option value="Barangay 171">Barangay 171</option>
+                        <option value="Barangay 172">Barangay 172</option>
+                        <option value="Barangay 173">Barangay 173</option>
+                        <option value="Barangay 174">Barangay 174</option>
+                        <option value="Barangay 175">Barangay 175</option>
+                        <option value="Barangay 176">Barangay 176</option>
+                    </select>
+                    <div class="input-error-message">Please select a barangay</div>
+                </div>
+
+                <!-- Hidden GPS Coordinates -->
+                <input type="hidden" id="latitude" name="latitude">
+                <input type="hidden" id="longitude" name="longitude">
+            </div>
+
+            <!-- Submit Button -->
+            <div class="flex gap-4">
+                <button type="submit" id="submitButton" class="btn btn-primary flex-1 py-4 text-lg">
+                    <i class="fas fa-paper-plane mr-2"></i>
+                    <span>Submit Report</span>
+                </button>
+                <a href="dashboard.html" class="btn btn-ghost py-4">
+                    Cancel
+                </a>
+            </div>
+        </form>
+    </div>
+
+    <style>
+        .category-card {
+            border: 2px solid #E5E7EB;
+            border-radius: 0.75rem;
+            padding: 1.5rem 1rem;
+            text-align: center;
+            transition: all 0.2s ease;
+            background: white;
+        }
+
+        .category-card:hover {
+            border-color: #FF6B35;
+            background: rgba(255, 107, 53, 0.05);
+        }
+
+        .category-radio:checked+.category-card {
+            border-color: #FF6B35;
+            background: rgba(255, 107, 53, 0.1);
+            box-shadow: 0 0 0 3px rgba(255, 107, 53, 0.1);
+        }
+
+        .severity-card {
+            border: 2px solid #E5E7EB;
+            border-radius: 0.75rem;
+            padding: 1.25rem 1rem;
+            text-align: center;
+            transition: all 0.2s ease;
+            background: white;
+        }
+
+        .severity-low {
+            color: #10B981;
+        }
+
+        .severity-medium {
+            color: #F59E0B;
+        }
+
+        .severity-high {
+            color: #F97316;
+        }
+
+        .severity-critical {
+            color: #EF4444;
+        }
+
+        .severity-radio:checked+.severity-card {
+            transform: scale(1.05);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .severity-radio:checked+.severity-low {
+            border-color: #10B981;
+            background: rgba(16, 185, 129, 0.1);
+        }
+
+        .severity-radio:checked+.severity-medium {
+            border-color: #F59E0B;
+            background: rgba(245, 158, 11, 0.1);
+        }
+
+        .severity-radio:checked+.severity-high {
+            border-color: #F97316;
+            background: rgba(249, 115, 22, 0.1);
+        }
+
+        .severity-radio:checked+.severity-critical {
+            border-color: #EF4444;
+            background: rgba(239, 68, 68, 0.1);
+        }
+    </style>
+
+    <script src="../assets/js/main.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            if (!NORTHSAFE.Auth.requireAuth()) return;
+
+            const form = document.getElementById('reportForm');
+            const imageInput = document.getElementById('hazardImage');
+            const imagePreviewContainer = document.getElementById('imagePreviewContainer');
+            const imagePreview = document.getElementById('imagePreview');
+            const removeImageBtn = document.getElementById('removeImage');
+            const uploadZone = document.getElementById('uploadZone');
+            const descriptionTextarea = document.getElementById('description');
+            const charCount = document.getElementById('charCount');
+            const aiClassification = document.getElementById('aiClassification');
+            const aiProcessing = document.getElementById('aiProcessing');
+            const aiResult = document.getElementById('aiResult');
+            const submitButton = document.getElementById('submitButton');
+            const originalButtonText = submitButton.innerHTML;
+
+            let uploadedImageData = null;
+            let aiPrediction = null;
+
+            // Drag and drop
+            uploadZone.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                uploadZone.classList.add('dragover');
+            });
+
+            uploadZone.addEventListener('dragleave', () => {
+                uploadZone.classList.remove('dragover');
+            });
+
+            uploadZone.addEventListener('drop', (e) => {
+                e.preventDefault();
+                uploadZone.classList.remove('dragover');
+                const files = e.dataTransfer.files;
+                if (files.length > 0) {
+                    imageInput.files = files;
+                    handleImageUpload();
+                }
+            });
+
+            // Image upload handler
+            imageInput.addEventListener('change', handleImageUpload);
+
+            async function handleImageUpload() {
+                const file = imageInput.files[0];
+                if (!file) return;
+
+                const validation = NORTHSAFE.Validate.imageFile(file);
+                if (!validation.valid) {
+                    NORTHSAFE.UI.showAlert(validation.message, 'error');
+                    imageInput.value = '';
+                    return;
+                }
+
+                try {
+                    uploadedImageData = await NORTHSAFE.ImageHandler.processImage(file);
+                    imagePreview.src = uploadedImageData;
+                    imagePreviewContainer.classList.remove('hidden');
+
+                    // Show AI classification
+                    aiClassification.classList.remove('hidden');
+                    aiProcessing.classList.remove('hidden');
+                    aiResult.classList.add('hidden');
+
+                    // Simulate AI classification
+                    const aiResponse = await NORTHSAFE.Reports.classifyImage(file);
+                    aiPrediction = aiResponse;
+
+                    setTimeout(() => {
+                        aiProcessing.classList.add('hidden');
+                        aiResult.classList.remove('hidden');
+                        document.getElementById('aiCategory').textContent = aiResponse.predicted;
+                        document.getElementById('aiConfidence').textContent =
+                            Math.round(aiResponse.confidence * 100) + '%';
+
+                        // Auto-select predicted category
+                        const categoryRadio = document.querySelector(`input[value="${aiResponse.predicted}"]`);
+                        if (categoryRadio) {
+                            categoryRadio.checked = true;
+                        }
+                    }, 1500);
+
+                } catch (error) {
+                    NORTHSAFE.UI.showAlert('Failed to process image', 'error');
+                }
+            }
+
+            // Remove image
+            removeImageBtn.addEventListener('click', () => {
+                imageInput.value = '';
+                uploadedImageData = null;
+                aiPrediction = null;
+                imagePreviewContainer.classList.add('hidden');
+                aiClassification.classList.add('hidden');
+            });
+
+            // Character count
+            descriptionTextarea.addEventListener('input', function () {
+                charCount.textContent = `${this.value.length} / 500`;
+            });
+
+            // Get current location
+            document.getElementById('getCurrentLocation').addEventListener('click', async function () {
+                const btn = this;
+                const originalText = btn.innerHTML;
+                btn.disabled = true;
+                btn.innerHTML = '<div class="spinner inline-block w-4 h-4 border-2 border-white border-t-transparent rounded-full"></div> <span class="ml-2">Getting location...</span>';
+
+                try {
+                    if (!navigator.geolocation) {
+                        throw new Error('Geolocation not supported');
+                    }
+
+                    navigator.geolocation.getCurrentPosition(
+                        (position) => {
+                            document.getElementById('latitude').value = position.coords.latitude;
+                            document.getElementById('longitude').value = position.coords.longitude;
+
+                            // In production, use reverse geocoding to get address
+                            NORTHSAFE.UI.showAlert('Location captured successfully!', 'success');
+
+                            btn.disabled = false;
+                            btn.innerHTML = '<i class="fas fa-check mr-2"></i>Location Captured';
+                            btn.classList.remove('btn-secondary');
+                            btn.classList.add('btn-ghost');
+                        },
+                        (error) => {
+                            NORTHSAFE.UI.showAlert('Could not get location. Please enter manually.', 'warning');
+                            btn.disabled = false;
+                            btn.innerHTML = originalText;
+                        }
+                    );
+                } catch (error) {
+                    NORTHSAFE.UI.showAlert(error.message, 'error');
+                    btn.disabled = false;
+                    btn.innerHTML = originalText;
+                }
+            });
+
+            // Form submission
+            form.addEventListener('submit', async function (e) {
+                e.preventDefault();
+
+                // Validate required fields
+                const category = document.querySelector('input[name="category"]:checked');
+                const severity = document.querySelector('input[name="severity"]:checked');
+                const title = document.getElementById('title').value;
+                const description = document.getElementById('description').value;
+                const address = document.getElementById('address').value;
+                const barangay = document.getElementById('locationBarangay').value;
+
+                if (!category || !severity || !title || !description || !address || !barangay) {
+                    NORTHSAFE.UI.showAlert('Please fill in all required fields', 'error');
+                    return;
+                }
+
+                // Show loading
+                submitButton.disabled = true;
+                submitButton.innerHTML = '<div class="spinner inline-block w-5 h-5 border-2 border-white border-t-transparent rounded-full"></div> <span class="ml-2">Submitting report...</span>';
+
+                // Prepare report data
+                const reportData = {
+                    category: category.value,
+                    severity: severity.value,
+                    title: title,
+                    description: description,
+                    location: {
+                        address: address,
+                        barangay: barangay,
+                        latitude: parseFloat(document.getElementById('latitude').value) || 14.7560,
+                        longitude: parseFloat(document.getElementById('longitude').value) || 120.9876
+                    },
+                    imageUrl: uploadedImageData,
+                    imageFile: imageInput.files[0]
+                };
+
+                // Simulate network delay
+                setTimeout(async () => {
+                    const result = await NORTHSAFE.Reports.create(reportData);
+
+                    if (result.success) {
+                        // Hide form and show success message
+                        form.classList.add('hidden');
+                        document.getElementById('successMessage').classList.remove('hidden');
+                        window.scrollTo({ top: 0, behavior: 'smooth' });
+                    } else {
+                        NORTHSAFE.UI.showAlert('Failed to submit report. Please try again.', 'error');
+                        submitButton.disabled = false;
+                        submitButton.innerHTML = originalButtonText;
+                    }
+                }, 1500);
+            });
+        });
+
+        function resetForm() {
+            document.getElementById('successMessage').classList.add('hidden');
+            document.getElementById('reportForm').classList.remove('hidden');
+            document.getElementById('reportForm').reset();
+            document.getElementById('imagePreviewContainer').classList.add('hidden');
+            document.getElementById('aiClassification').classList.add('hidden');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+    </script>
+</body>
+
+</html>

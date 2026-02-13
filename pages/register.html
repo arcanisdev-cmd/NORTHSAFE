@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Account - NORTHSAFE</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="../assets/css/style.css">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#FF6B35',
+                        'primary-dark': '#E85A2A',
+                        secondary: '#1E3A8A',
+                        'secondary-light': '#3B82F6',
+                        dark: '#0F172A',
+                    },
+                    fontFamily: {
+                        sans: ['Plus Jakarta Sans', 'sans-serif'],
+                        display: ['Space Grotesk', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+
+<body class="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50">
+
+    <!-- Navigation -->
+    <nav class="bg-white border-b border-gray-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-20">
+                <a href="../index.html" class="flex items-center space-x-3">
+                    <div
+                        class="w-12 h-12 bg-gradient-to-br from-primary to-secondary rounded-xl flex items-center justify-center">
+                        <i class="fas fa-shield-alt text-white text-lg"></i>
+                    </div>
+                    <span class="font-display font-bold text-2xl gradient-text">NORTHSAFE</span>
+                </a>
+                <div class="flex items-center space-x-4">
+                    <span class="text-gray-600">Already have an account?</span>
+                    <a href="login.html" class="btn btn-ghost">Sign In</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Registration Container -->
+    <div class="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+
+        <!-- Header -->
+        <div class="text-center mb-8 animate-slide-up">
+            <h1 class="font-display font-bold text-4xl lg:text-5xl gradient-text mb-4">
+                Join NORTHSAFE
+            </h1>
+            <p class="text-xl text-gray-600">
+                Create your account and start making your community safer
+            </p>
+        </div>
+
+        <!-- Registration Form Card -->
+        <div class="card p-8 lg:p-12 animate-slide-up" style="animation-delay: 0.1s">
+
+            <!-- Success Message -->
+            <div id="successMessage" class="hidden mb-6 alert alert-success">
+                <i class="fas fa-check-circle"></i>
+                <div>
+                    <strong>Account created successfully!</strong>
+                    <p class="text-sm mt-1">Redirecting to your dashboard...</p>
+                </div>
+            </div>
+
+            <!-- Error Message -->
+            <div id="registerError" class="hidden mb-6 alert alert-error">
+                <i class="fas fa-exclamation-circle"></i>
+                <span id="registerErrorText">Registration failed</span>
+            </div>
+
+            <form id="registerForm" class="space-y-6">
+
+                <!-- Full Name -->
+                <div class="input-group">
+                    <label for="fullName" class="block text-sm font-semibold text-gray-700 mb-2">
+                        Full Name *
+                    </label>
+                    <div class="relative">
+                        <div class="input-icon">
+                            <i class="fas fa-user text-gray-400"></i>
+                        </div>
+                        <input type="text" id="fullName" name="fullName" required class="input-field input-with-icon"
+                            placeholder="Juan Dela Cruz" autocomplete="name">
+                    </div>
+                    <div class="input-error-message">Please enter your full name</div>
+                </div>
+
+                <!-- Email -->
+                <div class="input-group">
+                    <label for="email" class="block text-sm font-semibold text-gray-700 mb-2">
+                        Email Address *
+                    </label>
+                    <div class="relative">
+                        <div class="input-icon">
+                            <i class="fas fa-envelope text-gray-400"></i>
+                        </div>
+                        <input type="email" id="email" name="email" required class="input-field input-with-icon"
+                            placeholder="your.email@example.com" autocomplete="email">
+                    </div>
+                    <div class="input-error-message">Please enter a valid email address</div>
+                </div>
+
+                <!-- Phone Number -->
+                <div class="input-group">
+                    <label for="phone" class="block text-sm font-semibold text-gray-700 mb-2">
+                        Phone Number *
+                    </label>
+                    <div class="relative">
+                        <div class="input-icon">
+                            <i class="fas fa-phone text-gray-400"></i>
+                        </div>
+                        <input type="tel" id="phone" name="phone" required class="input-field input-with-icon"
+                            placeholder="+63 912 345 6789" autocomplete="tel">
+                    </div>
+                    <div class="input-error-message">Please enter a valid phone number</div>
+                </div>
+
+                <!-- Barangay Selection -->
+                <div class="input-group">
+                    <label for="barangay" class="block text-sm font-semibold text-gray-700 mb-2">
+                        Barangay *
+                    </label>
+                    <div class="relative">
+                        <div class="input-icon">
+                            <i class="fas fa-map-marker-alt text-gray-400"></i>
+                        </div>
+                        <select id="barangay" name="barangay" required
+                            class="input-field input-with-icon appearance-none cursor-pointer">
+                            <option value="">Select your barangay</option>
+                            <option value="Barangay 171">Barangay 171</option>
+                            <option value="Barangay 172">Barangay 172</option>
+                            <option value="Barangay 173">Barangay 173</option>
+                            <option value="Barangay 174">Barangay 174</option>
+                            <option value="Barangay 175">Barangay 175</option>
+                            <option value="Barangay 176">Barangay 176</option>
+                        </select>
+                        <div class="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none">
+                            <i class="fas fa-chevron-down text-gray-400"></i>
+                        </div>
+                    </div>
+                    <div class="input-error-message">Please select your barangay</div>
+                </div>
+
+                <!-- Password -->
+                <div class="input-group">
+                    <label for="password" class="block text-sm font-semibold text-gray-700 mb-2">
+                        Password *
+                    </label>
+                    <div class="relative">
+                        <div class="input-icon">
+                            <i class="fas fa-lock text-gray-400"></i>
+                        </div>
+                        <input type="password" id="password" name="password" required
+                            class="input-field input-with-icon pr-12" placeholder="Minimum 6 characters"
+                            autocomplete="new-password">
+                        <button type="button" id="togglePassword"
+                            class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 hover:text-secondary transition-colors">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </div>
+                    <div class="input-error-message">Password must be at least 6 characters</div>
+                    <!-- Password Strength Indicator -->
+                    <div id="passwordStrength" class="mt-2 hidden">
+                        <div class="flex gap-1 mb-1">
+                            <div class="h-1 flex-1 bg-gray-200 rounded"></div>
+                            <div class="h-1 flex-1 bg-gray-200 rounded"></div>
+                            <div class="h-1 flex-1 bg-gray-200 rounded"></div>
+                            <div class="h-1 flex-1 bg-gray-200 rounded"></div>
+                        </div>
+                        <p class="text-xs text-gray-600">Password strength: <span id="strengthText">Weak</span></p>
+                    </div>
+                </div>
+
+                <!-- Confirm Password -->
+                <div class="input-group">
+                    <label for="confirmPassword" class="block text-sm font-semibold text-gray-700 mb-2">
+                        Confirm Password *
+                    </label>
+                    <div class="relative">
+                        <div class="input-icon">
+                            <i class="fas fa-lock text-gray-400"></i>
+                        </div>
+                        <input type="password" id="confirmPassword" name="confirmPassword" required
+                            class="input-field input-with-icon pr-12" placeholder="Re-enter your password"
+                            autocomplete="new-password">
+                        <button type="button" id="toggleConfirmPassword"
+                            class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 hover:text-secondary transition-colors">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </div>
+                    <div class="input-error-message">Passwords do not match</div>
+                </div>
+
+                <!-- Terms and Conditions -->
+                <div class="input-group">
+                    <label class="flex items-start cursor-pointer">
+                        <input type="checkbox" id="terms" name="terms" required
+                            class="w-5 h-5 text-primary border-gray-300 rounded focus:ring-primary focus:ring-2 mt-0.5">
+                        <span class="ml-3 text-sm text-gray-600">
+                            I agree to the <a href="#" class="text-secondary hover:text-primary font-semibold">Terms and
+                                Conditions</a>
+                            and <a href="#" class="text-secondary hover:text-primary font-semibold">Privacy Policy</a>
+                        </span>
+                    </label>
+                    <div class="input-error-message">You must agree to the terms and conditions</div>
+                </div>
+
+                <!-- Submit Button -->
+                <button type="submit" id="registerButton" class="btn btn-primary w-full py-4 text-lg">
+                    <i class="fas fa-user-plus mr-2"></i>
+                    <span>Create Account</span>
+                </button>
+            </form>
+
+            <!-- Sign In Link -->
+            <div class="mt-8 text-center">
+                <p class="text-gray-600">
+                    Already have an account?
+                    <a href="login.html" class="font-semibold text-secondary hover:text-primary transition-colors ml-1">
+                        Sign In
+                    </a>
+                </p>
+            </div>
+        </div>
+
+        <!-- Benefits Section -->
+        <div class="mt-12 grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div class="text-center">
+                <div
+                    class="w-16 h-16 bg-gradient-to-br from-primary to-orange-500 rounded-xl flex items-center justify-center mx-auto mb-4">
+                    <i class="fas fa-tachometer-alt text-2xl text-white"></i>
+                </div>
+                <h3 class="font-semibold text-dark mb-2">Quick Reports</h3>
+                <p class="text-sm text-gray-600">Submit hazard reports in seconds</p>
+            </div>
+            <div class="text-center">
+                <div
+                    class="w-16 h-16 bg-gradient-to-br from-secondary to-secondary-light rounded-xl flex items-center justify-center mx-auto mb-4">
+                    <i class="fas fa-bell text-2xl text-white"></i>
+                </div>
+                <h3 class="font-semibold text-dark mb-2">Real-time Updates</h3>
+                <p class="text-sm text-gray-600">Track your report progress</p>
+            </div>
+            <div class="text-center">
+                <div
+                    class="w-16 h-16 bg-gradient-to-br from-green-500 to-emerald-600 rounded-xl flex items-center justify-center mx-auto mb-4">
+                    <i class="fas fa-gift text-2xl text-white"></i>
+                </div>
+                <h3 class="font-semibold text-dark mb-2">Earn Rewards</h3>
+                <p class="text-sm text-gray-600">Get points for verified reports</p>
+            </div>
+        </div>
+    </div>
+
+    <script src="../assets/js/main.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const registerForm = document.getElementById('registerForm');
+            const registerButton = document.getElementById('registerButton');
+            const originalButtonText = registerButton.innerHTML;
+
+            const inputs = {
+                fullName: document.getElementById('fullName'),
+                email: document.getElementById('email'),
+                phone: document.getElementById('phone'),
+                barangay: document.getElementById('barangay'),
+                password: document.getElementById('password'),
+                confirmPassword: document.getElementById('confirmPassword'),
+                terms: document.getElementById('terms')
+            };
+
+            // Password visibility toggles
+            document.getElementById('togglePassword').addEventListener('click', function () {
+                const type = inputs.password.getAttribute('type') === 'password' ? 'text' : 'password';
+                inputs.password.setAttribute('type', type);
+                this.querySelector('i').classList.toggle('fa-eye');
+                this.querySelector('i').classList.toggle('fa-eye-slash');
+            });
+
+            document.getElementById('toggleConfirmPassword').addEventListener('click', function () {
+                const type = inputs.confirmPassword.getAttribute('type') === 'password' ? 'text' : 'password';
+                inputs.confirmPassword.setAttribute('type', type);
+                this.querySelector('i').classList.toggle('fa-eye');
+                this.querySelector('i').classList.toggle('fa-eye-slash');
+            });
+
+            // Password strength indicator
+            inputs.password.addEventListener('input', function () {
+                const strength = document.getElementById('passwordStrength');
+                const bars = strength.querySelectorAll('.h-1');
+                const strengthText = document.getElementById('strengthText');
+                const password = this.value;
+
+                if (password.length === 0) {
+                    strength.classList.add('hidden');
+                    return;
+                }
+
+                strength.classList.remove('hidden');
+
+                let level = 0;
+                if (password.length >= 6) level++;
+                if (password.length >= 10) level++;
+                if (/[A-Z]/.test(password) && /[a-z]/.test(password)) level++;
+                if (/[0-9]/.test(password) && /[^A-Za-z0-9]/.test(password)) level++;
+
+                bars.forEach((bar, index) => {
+                    bar.classList.remove('bg-red-500', 'bg-yellow-500', 'bg-green-500');
+                    if (index < level) {
+                        bar.classList.add(level <= 1 ? 'bg-red-500' : level <= 2 ? 'bg-yellow-500' : 'bg-green-500');
+                    } else {
+                        bar.classList.add('bg-gray-200');
+                    }
+                });
+
+                strengthText.textContent = ['Weak', 'Fair', 'Good', 'Strong'][level - 1] || 'Weak';
+                strengthText.className = `text-xs font-semibold ${level <= 1 ? 'text-red-600' : level <= 2 ? 'text-yellow-600' : 'text-green-600'}`;
+            });
+
+            // Clear errors on input
+            Object.values(inputs).forEach(input => {
+                input.addEventListener('input', function () {
+                    NORTHSAFE.UI.clearError(this);
+                    document.getElementById('registerError').classList.add('hidden');
+                });
+            });
+
+            // Form submission
+            registerForm.addEventListener('submit', async function (e) {
+                e.preventDefault();
+
+                // Clear previous errors
+                Object.values(inputs).forEach(input => NORTHSAFE.UI.clearError(input));
+                document.getElementById('registerError').classList.add('hidden');
+
+                // Validate
+                let isValid = true;
+
+                if (!NORTHSAFE.Validate.required(inputs.fullName.value)) {
+                    NORTHSAFE.UI.showError(inputs.fullName, 'Full name is required');
+                    isValid = false;
+                }
+
+                if (!NORTHSAFE.Validate.email(inputs.email.value)) {
+                    NORTHSAFE.UI.showError(inputs.email, 'Please enter a valid email');
+                    isValid = false;
+                }
+
+                if (!NORTHSAFE.Validate.phone(inputs.phone.value)) {
+                    NORTHSAFE.UI.showError(inputs.phone, 'Please enter a valid phone number');
+                    isValid = false;
+                }
+
+                if (!NORTHSAFE.Validate.required(inputs.barangay.value)) {
+                    NORTHSAFE.UI.showError(inputs.barangay, 'Please select your barangay');
+                    isValid = false;
+                }
+
+                if (!NORTHSAFE.Validate.password(inputs.password.value)) {
+                    NORTHSAFE.UI.showError(inputs.password, 'Password must be at least 6 characters');
+                    isValid = false;
+                }
+
+                if (inputs.password.value !== inputs.confirmPassword.value) {
+                    NORTHSAFE.UI.showError(inputs.confirmPassword, 'Passwords do not match');
+                    isValid = false;
+                }
+
+                if (!inputs.terms.checked) {
+                    NORTHSAFE.UI.showError(inputs.terms, 'You must agree to the terms');
+                    isValid = false;
+                }
+
+                if (!isValid) return;
+
+                // Show loading
+                registerButton.disabled = true;
+                registerButton.innerHTML = '<div class="spinner inline-block w-5 h-5 border-2 border-white border-t-transparent rounded-full"></div> <span class="ml-2">Creating account...</span>';
+
+                // Simulate network delay
+                setTimeout(() => {
+                    const userData = {
+                        email: inputs.email.value,
+                        password: inputs.password.value,
+                        name: inputs.fullName.value,
+                        phone: inputs.phone.value,
+                        barangay: inputs.barangay.value
+                    };
+
+                    const result = NORTHSAFE.Auth.register(userData);
+
+                    if (result.success) {
+                        document.getElementById('successMessage').classList.remove('hidden');
+                        registerForm.classList.add('hidden');
+
+                        setTimeout(() => {
+                            window.location.href = 'dashboard.html';
+                        }, 1500);
+                    } else {
+                        document.getElementById('registerErrorText').textContent = result.message;
+                        document.getElementById('registerError').classList.remove('hidden');
+                        registerButton.disabled = false;
+                        registerButton.innerHTML = originalButtonText;
+                    }
+                }, 1000);
+            });
+        });
+    </script>
+</body>
+
+</html>
