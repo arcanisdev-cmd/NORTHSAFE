@@ -86,7 +86,7 @@
                 <span id="registerErrorText">Registration failed</span>
             </div>
 
-            <form id="registerForm" class="space-y-6">
+            <form id="registerForm" class="space-y-6" method="POST" action="backend/register.php">
 
                 <!-- Full Name -->
                 <div class="input-group">
@@ -345,83 +345,99 @@
 
             // Form submission
             registerForm.addEventListener('submit', async function (e) {
-                e.preventDefault();
+    e.preventDefault();
 
-                // Clear previous errors
-                Object.values(inputs).forEach(input => NORTHSAFE.UI.clearError(input));
-                document.getElementById('registerError').classList.add('hidden');
+    // Clear previous errors
+    Object.values(inputs).forEach(input => NORTHSAFE.UI.clearError(input));
+    document.getElementById('registerError').classList.add('hidden');
 
-                // Validate
-                let isValid = true;
+    // Validate
+    let isValid = true;
 
-                if (!NORTHSAFE.Validate.required(inputs.fullName.value)) {
-                    NORTHSAFE.UI.showError(inputs.fullName, 'Full name is required');
-                    isValid = false;
-                }
+    if (!NORTHSAFE.Validate.required(inputs.fullName.value)) {
+        NORTHSAFE.UI.showError(inputs.fullName, 'Full name is required');
+        isValid = false;
+    }
 
-                if (!NORTHSAFE.Validate.email(inputs.email.value)) {
-                    NORTHSAFE.UI.showError(inputs.email, 'Please enter a valid email');
-                    isValid = false;
-                }
+    if (!NORTHSAFE.Validate.email(inputs.email.value)) {
+        NORTHSAFE.UI.showError(inputs.email, 'Please enter a valid email');
+        isValid = false;
+    }
 
-                if (!NORTHSAFE.Validate.phone(inputs.phone.value)) {
-                    NORTHSAFE.UI.showError(inputs.phone, 'Please enter a valid phone number');
-                    isValid = false;
-                }
+    if (!NORTHSAFE.Validate.phone(inputs.phone.value)) {
+        NORTHSAFE.UI.showError(inputs.phone, 'Please enter a valid phone number');
+        isValid = false;
+    }
 
-                if (!NORTHSAFE.Validate.required(inputs.barangay.value)) {
-                    NORTHSAFE.UI.showError(inputs.barangay, 'Please select your barangay');
-                    isValid = false;
-                }
+    if (!NORTHSAFE.Validate.required(inputs.barangay.value)) {
+        NORTHSAFE.UI.showError(inputs.barangay, 'Please select your barangay');
+        isValid = false;
+    }
 
-                if (!NORTHSAFE.Validate.password(inputs.password.value)) {
-                    NORTHSAFE.UI.showError(inputs.password, 'Password must be at least 6 characters');
-                    isValid = false;
-                }
+    if (!NORTHSAFE.Validate.password(inputs.password.value)) {
+        NORTHSAFE.UI.showError(inputs.password, 'Password must be at least 6 characters');
+        isValid = false;
+    }
 
-                if (inputs.password.value !== inputs.confirmPassword.value) {
-                    NORTHSAFE.UI.showError(inputs.confirmPassword, 'Passwords do not match');
-                    isValid = false;
-                }
+    if (inputs.password.value !== inputs.confirmPassword.value) {
+        NORTHSAFE.UI.showError(inputs.confirmPassword, 'Passwords do not match');
+        isValid = false;
+    }
 
-                if (!inputs.terms.checked) {
-                    NORTHSAFE.UI.showError(inputs.terms, 'You must agree to the terms');
-                    isValid = false;
-                }
+    if (!inputs.terms.checked) {
+        NORTHSAFE.UI.showError(inputs.terms, 'You must agree to the terms');
+        isValid = false;
+    }
 
-                if (!isValid) return;
+    if (!isValid) return;
 
-                // Show loading
-                registerButton.disabled = true;
-                registerButton.innerHTML = '<div class="spinner inline-block w-5 h-5 border-2 border-white border-t-transparent rounded-full"></div> <span class="ml-2">Creating account...</span>';
+    // Show loading
+    registerButton.disabled = true;
+    registerButton.innerHTML =
+        '<div class="spinner inline-block w-5 h-5 border-2 border-white border-t-transparent rounded-full"></div> <span class="ml-2">Creating account...</span>';
 
-                // Simulate network delay
-                setTimeout(() => {
-                    const userData = {
-                        email: inputs.email.value,
-                        password: inputs.password.value,
-                        name: inputs.fullName.value,
-                        phone: inputs.phone.value,
-                        barangay: inputs.barangay.value
-                    };
+    try {
+        const response = await fetch('../../backend/register.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
+            },
+            body: new URLSearchParams({
+                fullName: inputs.fullName.value,
+                email: inputs.email.value,
+                phone: inputs.phone.value,
+                barangay: inputs.barangay.value,
+                password: inputs.password.value,
+                confirmPassword: inputs.confirmPassword.value
+            })
+        });
 
-                    const result = NORTHSAFE.Auth.register(userData);
+        const result = await response.json();
 
-                    if (result.success) {
-                        document.getElementById('successMessage').classList.remove('hidden');
-                        registerForm.classList.add('hidden');
+        if (result.success) {
+            document.getElementById('successMessage').classList.remove('hidden');
+            registerForm.classList.add('hidden');
 
-                        setTimeout(() => {
-                            window.location.href = 'dashboard.html';
-                        }, 1500);
-                    } else {
-                        document.getElementById('registerErrorText').textContent = result.message;
-                        document.getElementById('registerError').classList.remove('hidden');
-                        registerButton.disabled = false;
-                        registerButton.innerHTML = originalButtonText;
-                    }
-                }, 1000);
-            });
+            setTimeout(() => {
+                window.location.href = 'login.php';
+            }, 1500);
+        } else {
+            document.getElementById('registerErrorText').textContent = result.message;
+            document.getElementById('registerError').classList.remove('hidden');
+
+            registerButton.disabled = false;
+            registerButton.innerHTML = originalButtonText;
+        }
+
+    } catch (error) {
+        document.getElementById('registerErrorText').textContent =
+            'Server error. Please try again.';
+        document.getElementById('registerError').classList.remove('hidden');
+
+        registerButton.disabled = false;
+        registerButton.innerHTML = originalButtonText;
+    }
+});
         });
     </script>
 </body>

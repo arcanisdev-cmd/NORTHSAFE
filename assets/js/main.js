@@ -270,38 +270,63 @@ const Auth = {
         AppState.clearUser();
         // Redirect to login page
         const isInPagesDir = window.location.pathname.includes('/pages/');
-        window.location.href = isInPagesDir ? 'login.html' : 'pages/login.html';
+        window.location.href = isInPagesDir ? 'login.php' : 'pages/login.php';
     },
 
-    getCurrentUser() {
-        return AppState.currentUser;
+    async getCurrentUser() {
+        try {
+            const response = await fetch('../backend/session_check.php', {
+                method: 'GET',
+                credentials: 'include'
+            });
+
+            const data = await response.json();
+
+            if (data.authenticated) {
+                return data.user;
+            }
+
+            return null;
+
+        } catch (error) {
+            console.error('Failed to fetch session user:', error);
+            return null;
+        }
     },
 
     isAuthenticated() {
         return AppState.currentUser !== null;
     },
 
-    isAdmin() {
-        return AppState.currentUser?.role === 'admin';
-    },
 
-    requireAuth(redirectUrl = 'login.html') {
-        if (!this.isAuthenticated()) {
-            // Smart redirect - check if we're in pages directory
+    async requireAuth(redirectUrl = 'login.php') {
+
+    try {
+        const response = await fetch('../backend/session_check.php', {
+            method: 'GET',
+            credentials: 'include'
+        });
+
+        const data = await response.json();
+
+        if (!data.authenticated) {
+
             const isInPagesDir = window.location.pathname.includes('/pages/');
-            const finalRedirect = isInPagesDir ? redirectUrl : `pages/${redirectUrl}`;
+            const finalRedirect = isInPagesDir
+                ? redirectUrl
+                : `pages/${redirectUrl}`;
+
             window.location.href = finalRedirect;
             return false;
         }
-        return true;
-    },
 
-    requireAdmin(redirectUrl = 'dashboard.html') {
-        if (!this.isAdmin()) {
-            window.location.href = redirectUrl;
-            return false;
-        }
         return true;
+
+    } catch (error) {
+        console.error('Session check failed:', error);
+        window.location.href = redirectUrl;
+        return false;
+    }
     },
 
     getAllAccounts() {
@@ -334,48 +359,30 @@ const Reports = {
     },
 
     async create(reportData) {
-        const user = Auth.getCurrentUser();
-        if (!user) {
-            return { success: false, message: 'User not authenticated' };
-        }
 
-        // Simulate AI classification (placeholder)
-        let aiClassification = null;
-        if (reportData.imageFile) {
-            aiClassification = await this.classifyImage(reportData.imageFile);
-        }
+    const formData = new FormData();
 
-        const newReport = {
-            id: Date.now(),
-            userId: user.id,
-            userName: user.name,
-            userBarangay: user.barangay,
-            category: reportData.category,
-            severity: reportData.severity || 'Medium',
-            status: 'Pending',
-            title: reportData.title,
-            description: reportData.description,
-            location: reportData.location,
-            imageUrl: reportData.imageUrl,
-            aiClassification: aiClassification,
-            votes: { up: 0, down: 0 },
-            comments: [],
-            createdAt: new Date().toISOString(),
-            updatedAt: new Date().toISOString(),
-            timeline: [
-                {
-                    status: 'Pending',
-                    timestamp: new Date().toISOString(),
-                    note: 'Report submitted and awaiting verification'
-                }
-            ]
-        };
+    formData.append("category", reportData.category);
+    formData.append("severity", reportData.severity);
+    formData.append("title", reportData.title);
+    formData.append("description", reportData.description);
+    formData.append("address", reportData.location.address);
+    formData.append("barangay", reportData.location.barangay);
+    formData.append("latitude", reportData.location.latitude);
+    formData.append("longitude", reportData.location.longitude);
 
-        const reports = [...AppState.reports, newReport];
-        AppState.saveReports(reports);
+    if (reportData.imageFile) {
+        formData.append("image", reportData.imageFile);
+    }
 
-        return { success: true, report: newReport };
-    },
+    const response = await fetch("../backend/create-report.php", {
+        method: "POST",
+        body: formData,
+        credentials: "include"
+    });
+
+    return await response.json();
+},
 
     async classifyImage(imageFile) {
         // Placeholder for AI image classification

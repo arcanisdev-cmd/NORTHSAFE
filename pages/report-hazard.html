@@ -40,14 +40,14 @@
     <nav class="bg-white border-b border-gray-200">
         <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between items-center h-16">
-                <a href="dashboard.html" class="flex items-center space-x-3">
+                <a href="dashboard.php" class="flex items-center space-x-3">
                     <div
                         class="w-10 h-10 bg-gradient-to-br from-primary to-secondary rounded-lg flex items-center justify-center">
                         <i class="fas fa-shield-alt text-white"></i>
                     </div>
                     <span class="font-display font-bold text-xl gradient-text">NORTHSAFE</span>
                 </a>
-                <a href="dashboard.html" class="text-gray-600 hover:text-secondary transition-colors">
+                <a href="dashboard.php" class="text-gray-600 hover:text-secondary transition-colors">
                     <i class="fas fa-times text-2xl"></i>
                 </a>
             </div>
@@ -81,7 +81,7 @@
                         You will receive notifications about the progress.
                     </p>
                     <div class="flex gap-3">
-                        <button onclick="window.location.href='dashboard.html'" class="btn btn-primary text-sm">
+                        <button onclick="window.location.href='dashboard.php'" class="btn btn-primary text-sm">
                             <i class="fas fa-th-large mr-2"></i>View Dashboard
                         </button>
                         <button onclick="resetForm()" class="btn btn-ghost text-sm">
@@ -460,7 +460,6 @@
     <script src="../assets/js/main.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-            if (!NORTHSAFE.Auth.requireAuth()) return;
 
             const form = document.getElementById('reportForm');
             const imageInput = document.getElementById('hazardImage');
@@ -638,7 +637,7 @@
                 // Simulate network delay
                 setTimeout(async () => {
                     const result = await NORTHSAFE.Reports.create(reportData);
-
+                    console.log(result);
                     if (result.success) {
                         // Hide form and show success message
                         form.classList.add('hidden');

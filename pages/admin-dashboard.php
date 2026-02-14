@@ -176,9 +176,6 @@
         let currentReportId = null;
 
         document.addEventListener('DOMContentLoaded', function () {
-            // Check auth and admin role
-            if (!NORTHSAFE.Auth.requireAuth()) return;
-            if (!NORTHSAFE.Auth.requireAdmin()) return;
 
             const user = NORTHSAFE.Auth.getCurrentUser();
             document.getElementById('userName').textContent = user.name;

@@ -1,3 +1,51 @@
+<?php
+session_start();
+require "../backend/database.php";
+
+$response = ["success" => false, "message" => "Invalid credentials"];
+
+if ($_SERVER["REQUEST_METHOD"] === "POST") {
+
+    $email = $_POST["email"] ?? '';
+    $password = $_POST["password"] ?? '';
+
+    if (empty($email) || empty($password)) {
+        echo json_encode(["success" => false, "message" => "All fields are required"]);
+        exit;
+    }
+
+    // Prepared statement (SECURE)
+    $stmt = $conn->prepare("SELECT id, fullname, email, barangay, password FROM user WHERE email = ?");
+    $stmt->bind_param("s", $email);
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    if ($result->num_rows === 1) {
+
+        $user = $result->fetch_assoc();
+
+        // If you used password_hash()
+        if (password_verify($password, $user["password"])) {
+
+            $_SESSION["user_id"] = $user["id"];
+            $_SESSION["fullname"] = $user["fullname"];
+            $_SESSION["email"] = $user["email"];
+
+            $response = [
+                "success" => true,
+                "user" => [
+                    "id" => $user["id"],
+                    "fullname" => $user["fullname"],
+                    "email" => $user["email"],
+                    "barangay" => $user["barangay"]
+                ]
+            ];
+        }
+    }
+
+    echo json_encode($response);
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -229,56 +277,47 @@
 
             // Handle form submission
             loginForm.addEventListener('submit', async function (e) {
-                e.preventDefault();
+    e.preventDefault();
 
-                // Clear previous errors
-                NORTHSAFE.UI.clearError(emailInput);
-                NORTHSAFE.UI.clearError(passwordInput);
-                loginError.classList.add('hidden');
+    loginButton.disabled = true;
+    loginButton.innerHTML = 'Signing in...';
+    
 
-                // Validate inputs
-                let isValid = true;
+    try {
+        const response = await fetch("../backend/login.php", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                email: emailInput.value,
+                password: passwordInput.value
+            })
+        });
 
-                if (!NORTHSAFE.Validate.email(emailInput.value)) {
-                    NORTHSAFE.UI.showError(emailInput, 'Please enter a valid email address');
-                    isValid = false;
-                }
+        const result = await response.json();
+        const result2 = NORTHSAFE.Auth.login(emailInput.value, passwordInput.value);
+        if (result.success && result.user) {
+            if (result.user.role.toLowerCase() === "admin") {
+                window.location.href = "admin-dashboard.php";
+            } else {
+                window.location.href = "home.php";
+            }
 
-                if (!NORTHSAFE.Validate.required(passwordInput.value)) {
-                    NORTHSAFE.UI.showError(passwordInput, 'Password is required');
-                    isValid = false;
-                }
+        } else {
+            loginError.querySelector('#loginErrorText').textContent =
+                result.message || "Invalid credentials";
+            loginError.classList.remove('hidden');
+        }
 
-                if (!isValid) return;
+    } catch (error) {
+        console.error(error);
+        alert("Server error");
+    }
 
-                // Show loading state
-                loginButton.disabled = true;
-                loginButton.innerHTML = '<div class="spinner inline-block w-5 h-5 border-2 border-white border-t-transparent rounded-full"></div> <span class="ml-2">Signing in...</span>';
-
-                // Simulate network delay for demo
-                setTimeout(() => {
-                    const result = NORTHSAFE.Auth.login(emailInput.value, passwordInput.value);
-
-                    if (result.success) {
-                        // Show success and redirect
-                        NORTHSAFE.UI.showAlert('Login successful! Redirecting...', 'success');
-
-                        setTimeout(() => {
-                            if (result.user.role === 'admin') {
-                                window.location.href = 'admin-dashboard.html';
-                            } else {
-                                window.location.href = 'home.html';
-                            }
-                        }, 500);
-                    } else {
-                        // Show error
-                        loginError.querySelector('#loginErrorText').textContent = result.message;
-                        loginError.classList.remove('hidden');
-                        loginButton.disabled = false;
-                        loginButton.innerHTML = originalButtonText;
-                    }
-                }, 800);
-            });
+    loginButton.disabled = false;
+    loginButton.innerHTML = originalButtonText;
+});
         });
     </script>
 </body>

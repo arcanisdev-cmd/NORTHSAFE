@@ -1,3 +1,6 @@
+<?php
+session_start();
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -41,7 +44,7 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between items-center h-16">
                 <div class="flex items-center space-x-8">
-                    <a href="home.html" class="flex items-center space-x-3">
+                    <a href="home.php" class="flex items-center space-x-3">
                         <div
                             class="w-10 h-10 bg-gradient-to-br from-primary to-secondary rounded-lg flex items-center justify-center">
                             <i class="fas fa-shield-alt text-white"></i>
@@ -50,10 +53,10 @@
                     </a>
 
                     <div class="hidden md:flex items-center space-x-6">
-                        <a href="home.html" class="nav-link">
+                        <a href="home.php" class="nav-link">
                             <i class="fas fa-home mr-2"></i>Home
                         </a>
-                        <a href="dashboard.html" class="nav-link active">
+                        <a href="dashboard.php" class="nav-link active">
                             <i class="fas fa-chart-line mr-2"></i>My Reports
                         </a>
                         <a href="hazard-map.html" class="nav-link">
@@ -78,8 +81,8 @@
                                 <span class="text-white text-sm font-bold" id="userInitial">J</span>
                             </div>
                             <div class="hidden md:block text-left">
-                                <p class="text-sm font-semibold text-dark" id="userName">Juan Dela Cruz</p>
-                                <p class="text-xs text-gray-500" id="userBarangay">Barangay 171</p>
+                                <p class="text-sm font-semibold text-dark" id="userName"><?= $_SESSION["fullname"];?></p>
+                                <p class="text-xs text-gray-500" id="userBarangay"><?= $_SESSION['user']['barangay'];?></p>
                             </div>
                             <i class="fas fa-chevron-down text-gray-400 text-sm"></i>
                         </button>
@@ -348,172 +351,137 @@
 
     <script src="../assets/js/main.js"></script>
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            // Check authentication
-            if (!NORTHSAFE.Auth.requireAuth()) return;
+document.addEventListener('DOMContentLoaded', async function () {
 
-            const user = NORTHSAFE.Auth.getCurrentUser();
-
-            // Update user info
-            document.getElementById('userName').textContent = user.name;
-            document.getElementById('userBarangay').textContent = user.barangay;
-            document.getElementById('welcomeName').textContent = user.name.split(' ')[0];
-            document.getElementById('userInitial').textContent = user.name.charAt(0);
-
-            // User menu toggle
-            const userMenuButton = document.getElementById('userMenuButton');
-            const userMenuDropdown = document.getElementById('userMenuDropdown');
-
-            userMenuButton.addEventListener('click', function (e) {
-                e.stopPropagation();
-                userMenuDropdown.classList.toggle('hidden');
-            });
-
-            document.addEventListener('click', function () {
-                userMenuDropdown.classList.add('hidden');
-            });
-
-            // Logout
-            document.getElementById('logoutBtn').addEventListener('click', function () {
-                NORTHSAFE.Auth.logout();
-            });
-
-            // Emergency modal
-            const emergencyBtn = document.getElementById('emergencyBtn');
-            const emergencyModal = document.getElementById('emergencyModal');
-            const closeEmergencyModal = document.getElementById('closeEmergencyModal');
-
-            emergencyBtn.addEventListener('click', () => {
-                emergencyModal.classList.add('active');
-            });
-
-            closeEmergencyModal.addEventListener('click', () => {
-                emergencyModal.classList.remove('active');
-            });
-
-            emergencyModal.addEventListener('click', (e) => {
-                if (e.target === emergencyModal) {
-                    emergencyModal.classList.remove('active');
-                }
-            });
-
-            // Load statistics
-            const userReports = NORTHSAFE.Reports.getByUser(user.id);
-            document.getElementById('totalReports').textContent = userReports.length;
-            document.getElementById('pendingReports').textContent = userReports.filter(r => r.status === 'Pending').length;
-            document.getElementById('resolvedReports').textContent = userReports.filter(r => r.status === 'Resolved').length;
-            document.getElementById('rewardPoints').textContent = user.points || 0;
-
-            // Load reports table
-            function loadReports(filter = 'all') {
-                const tbody = document.getElementById('reportsTableBody');
-                const emptyState = document.getElementById('emptyState');
-
-                let reports = userReports;
-                if (filter !== 'all') {
-                    reports = reports.filter(r => r.status === filter);
-                }
-
-                if (reports.length === 0) {
-                    tbody.innerHTML = '';
-                    emptyState.classList.remove('hidden');
-                    return;
-                }
-
-                emptyState.classList.add('hidden');
-
-                tbody.innerHTML = reports.map(report => `
-                    <tr class="hover:bg-gray-50 transition-colors">
-                        <td class="px-6 py-4">
-                            <div class="flex items-center">
-                                <div class="flex-shrink-0 h-10 w-10 bg-gradient-to-br from-primary to-orange-500 rounded-lg flex items-center justify-center">
-                                    <i class="fas fa-${getCategoryIcon(report.category)} text-white"></i>
-                                </div>
-                                <div class="ml-4">
-                                    <div class="text-sm font-semibold text-dark">${report.title}</div>
-                                    <div class="text-xs text-gray-500">${report.location.address}</div>
-                                </div>
-                            </div>
-                        </td>
-                        <td class="px-6 py-4">
-                            <span class="inline-flex px-3 py-1 text-xs font-semibold rounded-full bg-gray-100 text-gray-800">
-                                ${report.category}
-                            </span>
-                        </td>
-                        <td class="px-6 py-4">
-                            <span class="status-badge status-${report.status.toLowerCase().replace(' ', '-')}">
-                                ${report.status}
-                            </span>
-                        </td>
-                        <td class="px-6 py-4 text-sm text-gray-600">
-                            ${NORTHSAFE.UI.getRelativeTime(report.createdAt)}
-                        </td>
-                        <td class="px-6 py-4">
-                            <button onclick="viewReport(${report.id})" class="text-secondary hover:text-primary font-semibold text-sm">
-                                View Details <i class="fas fa-arrow-right ml-1"></i>
-                            </button>
-                        </td>
-                    </tr>
-                `).join('');
-            }
-
-            // Load community reports
-            function loadCommunityReports() {
-                const allReports = NORTHSAFE.Reports.getAll()
-                    .filter(r => r.userId !== user.id)
-                    .slice(0, 6);
-
-                const container = document.getElementById('communityReports');
-
-                container.innerHTML = allReports.map(report => `
-                    <div class="card p-4 hover:shadow-lg transition-all">
-                        <div class="flex items-start justify-between mb-3">
-                            <span class="status-badge status-${report.status.toLowerCase().replace(' ', '-')}">
-                                ${report.status}
-                            </span>
-                            <span class="text-xs text-gray-500">${NORTHSAFE.UI.getRelativeTime(report.createdAt)}</span>
-                        </div>
-                        <h3 class="font-semibold text-dark mb-2">${report.title}</h3>
-                        <p class="text-sm text-gray-600 mb-3 line-clamp-2">${report.description}</p>
-                        <div class="flex items-center justify-between text-xs text-gray-500">
-                            <span><i class="fas fa-map-marker-alt mr-1"></i>${report.location.barangay}</span>
-                            <span class="inline-flex px-2 py-1 bg-gray-100 rounded">
-                                ${report.category}
-                            </span>
-                        </div>
-                    </div>
-                `).join('');
-            }
-
-            function getCategoryIcon(category) {
-                const icons = {
-                    'Fire Hazard': 'fire',
-                    'Flood': 'tint',
-                    'Road Damage': 'road',
-                    'Fallen Tree': 'tree',
-                    'Power Line': 'bolt',
-                    'Building Damage': 'building',
-                    'Illegal Dumping': 'trash',
-                    'Other': 'exclamation-circle'
-                };
-                return icons[category] || 'exclamation-circle';
-            }
-
-            // Filter reports
-            document.getElementById('filterStatus').addEventListener('change', function () {
-                loadReports(this.value);
-            });
-
-            // Initial load
-            loadReports();
-            loadCommunityReports();
+    try {
+        const response = await fetch('../backend/get-my-reports.php', {
+            credentials: 'include'
         });
 
-        function viewReport(reportId) {
-            // Navigate to report details
-            window.location.href = `report-detail.html?id=${reportId}`;
+        const data = await response.json();
+
+        if (!data.success) {
+            window.location.href = 'login.php';
+            return;
         }
-    </script>
+
+        const reports = data.reports;
+
+        // Update stats
+        document.getElementById('totalReports').textContent = reports.length;
+        document.getElementById('pendingReports').textContent =
+            reports.filter(r => r.status === 'Pending').length;
+
+        document.getElementById('resolvedReports').textContent =
+            reports.filter(r => r.status === 'Resolved').length;
+
+        document.getElementById('rewardPoints').textContent = 0;
+
+        loadReports(reports);
+
+    } catch (error) {
+        console.error(error);
+    }
+
+    function loadReports(reports) {
+
+        const tbody = document.getElementById('reportsTableBody');
+        const emptyState = document.getElementById('emptyState');
+
+        if (reports.length === 0) {
+            tbody.innerHTML = '';
+            emptyState.classList.remove('hidden');
+            return;
+        }
+
+        emptyState.classList.add('hidden');
+
+        tbody.innerHTML = reports.map(report => `
+            <tr class="hover:bg-gray-50 transition-colors">
+                <td class="px-6 py-4">
+                    <div class="text-sm font-semibold text-dark">
+                        ${report.title}
+                    </div>
+                    <div class="text-xs text-gray-500">
+                        ${report.address}
+                    </div>
+                </td>
+
+                <td class="px-6 py-4">
+                    ${report.category}
+                </td>
+
+                <td class="px-6 py-4">
+                    ${report.status}
+                </td>
+
+                <td class="px-6 py-4 text-sm text-gray-600">
+                    ${new Date(report.created_at).toLocaleDateString()}
+                </td>
+
+                <td class="px-6 py-4">
+                    <button onclick="viewReport(${report.id})"
+                        class="text-secondary hover:text-primary font-semibold text-sm">
+                        View Details
+                    </button>
+                </td>
+            </tr>
+        `).join('');
+    }
+});
+document.addEventListener('DOMContentLoaded', function () {
+
+    const userMenuButton = document.getElementById('userMenuButton');
+    const userMenuDropdown = document.getElementById('userMenuDropdown');
+    const logoutBtn = document.getElementById('logoutBtn');
+
+    if (!userMenuButton || !userMenuDropdown) return;
+
+    // Toggle dropdown
+    userMenuButton.addEventListener('click', function (e) {
+        e.stopPropagation();
+        userMenuDropdown.classList.toggle('hidden');
+    });
+
+    // Close when clicking outside
+    document.addEventListener('click', function (e) {
+        if (!userMenuButton.contains(e.target) &&
+            !userMenuDropdown.contains(e.target)) {
+            userMenuDropdown.classList.add('hidden');
+        }
+    });
+
+    // Logout
+    if (logoutBtn) {
+        logoutBtn.addEventListener('click', async function () {
+
+            if (!confirm('Are you sure you want to logout?')) return;
+
+            try {
+                const response = await fetch('../backend/logout.php', {
+                    method: 'POST',
+                    credentials: 'include'
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    window.location.href = 'login.php';
+                }
+
+            } catch (error) {
+                console.error(error);
+            }
+        });
+    }
+
+});
+
+function viewReport(reportId) {
+            // Navigate to report details
+            alert("Not Yet Available");
+        }
+</script>
 </body>
 
 </html>

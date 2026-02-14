@@ -1,3 +1,6 @@
+<?php
+session_start();
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -69,12 +72,12 @@
 
                 <!-- Desktop Navigation Links -->
                 <div class="hidden md:flex items-center space-x-6">
-                    <a href="home.html"
+                    <a href="home.php"
                         class="flex items-center space-x-2 px-4 py-2 bg-primary text-white rounded-lg font-semibold transition-colors">
                         <i class="fas fa-home"></i>
                         <span>Home</span>
                     </a>
-                    <a href="dashboard.html"
+                    <a href="dashboard.php"
                         class="flex items-center space-x-2 px-4 py-2 text-secondary hover:text-primary hover:bg-cream-dark rounded-lg font-semibold transition-colors">
                         <i class="fas fa-chart-line"></i>
                         <span>My Reports</span>
@@ -109,7 +112,7 @@
 
                     <!-- User Account -->
                     <div class="relative group hidden md:block">
-                        <button
+                        <button id="userMenuButton"
                             class="flex items-center space-x-3 px-3 py-2 hover:bg-cream-dark rounded-lg transition-colors"
                             aria-label="User menu">
                             <div
@@ -117,7 +120,7 @@
                                 JD
                             </div>
                             <div class="hidden lg:block text-left">
-                                <p class="text-sm font-semibold text-gray-800">Juan Cruz</p>
+                                <p class="text-sm font-semibold text-gray-800"><?= $_SESSION["fullname"];?></p>
                                 <p class="text-xs text-success flex items-center">
                                     <i class="fas fa-star mr-1"></i>
                                     1,250 pts
@@ -127,8 +130,8 @@
                         </button>
 
                         <!-- Dropdown Menu -->
-                        <div
-                            class="hidden group-hover:block absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 py-2">
+                        <div id="userDropdown"
+                            class="hidden absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 py-2">
                             <a href="profile.html" class="block px-4 py-2 text-sm text-gray-700 hover:bg-cream-dark">
                                 <i class="fas fa-user mr-2"></i>Profile
                             </a>
@@ -178,7 +181,7 @@
                                 JD
                             </div>
                             <div>
-                                <p class="text-sm font-semibold text-gray-800">Juan Cruz</p>
+                                <p class="text-sm font-semibold text-gray-800"><?= $_SESSION["fullname"];?></p>
                                 <p class="text-xs text-success flex items-center">
                                     <i class="fas fa-star mr-1"></i>
                                     1,250 pts
@@ -318,7 +321,7 @@
                                     <div class="flex items-center space-x-2">
                                         <img src="https://ui-avatars.com/api/?name=Juan+Dela+Cruz&background=6366f1&color=fff"
                                             class="w-6 h-6 rounded-full" alt="Juan Dela Cruz">
-                                        <span class="font-semibold">Juan Dela Cruz</span>
+                                        <span class="font-semibold"><?= $_SESSION["fullname"];?></span>
                                         <span
                                             class="px-2 py-0.5 bg-primary/10 text-primary rounded text-xs font-bold">Level
                                             5</span>
@@ -799,8 +802,6 @@
         // Authentication required - redirect if not logged in
         document.addEventListener('DOMContentLoaded', function () {
             // Check if user is authenticated
-            if (!NORTHSAFE.Auth.requireAuth()) return;
-
             const user = NORTHSAFE.Auth.getCurrentUser();
 
             // Get user initials
@@ -830,11 +831,52 @@
         });
 
         // Logout function
-        function logout() {
-            if (confirm('Are you sure you want to logout?')) {
-                NORTHSAFE.Auth.logout();
-            }
+        // Logout function
+async function logout() {
+    if (!confirm('Are you sure you want to logout?')) return;
+
+    try {
+        const response = await fetch('../backend/logout.php', {
+            method: 'POST',
+            credentials: 'include'
+        });
+
+        const result = await response.json();
+
+        if (result.success) {
+            window.location.href = '../pages/login.php';
+        } else {
+            alert('Logout failed.');
         }
+
+    } catch (error) {
+        console.error('Logout error:', error);
+        alert('Something went wrong.');
+    }
+}
+
+// User dropdown toggle
+document.addEventListener('DOMContentLoaded', function () {
+
+    const userMenuButton = document.getElementById('userMenuButton');
+    const userDropdown = document.getElementById('userDropdown');
+
+    if (!userMenuButton || !userDropdown) return;
+
+    userMenuButton.addEventListener('click', function (e) {
+        e.stopPropagation();
+        userDropdown.classList.toggle('hidden');
+    });
+
+    document.addEventListener('click', function (e) {
+        if (!userMenuButton.contains(e.target) &&
+            !userDropdown.contains(e.target)) {
+            userDropdown.classList.add('hidden');
+        }
+    });
+});
+
+        
     </script>
 </body>
 
